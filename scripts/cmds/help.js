@@ -89,7 +89,7 @@ module.exports = {
 `╭─ 𝐂𝐎𝐌𝐌𝐀𝐍𝐃𝐒 𝐌𝐄𝐍𝐔
 ├ Prefix : ${prefix}
 ├ Total  : ${allCommands.size}
-├ Author : EryXenX\n`;
+├ Author : Robiul*bot\n`;
 
     for (const cat of Object.keys(categories).sort()) {
       const catTitle = categoryFont(cat.toUpperCase());
