@@ -2,9 +2,9 @@ const axios = require("axios");
 
 module.exports = {
   config: {
-    name: "islamicPrefixReply", // কনফ্লিক্ট এড়াতে নাম পরিবর্তন করা হয়েছে
+    name: "${global.config.PREFIX}", // কনফ্লিক্ট এড়াতে নাম পরিবর্তন করা হয়েছে
     version: "1.0.6",
-    author: "nayan",
+    author: "Rakib",
     countDown: 5,
     role: 0,
     shortDescription: "প্রিফিক্স দিলে ইসলামিক বার্তা ও ছবি পাঠায়",
