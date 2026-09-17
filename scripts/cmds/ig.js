@@ -1,29 +1,30 @@
 const axios = require("axios");
+const fs = require("fs-extra");
+const path = require("path");
 
 module.exports = {
   config: {
     name: "prefix",
-    version: "1.0.0",
-    author: "Rakib",
+    version: "1.0.5",
+    author: "nayan",
     countDown: 5,
     role: 0,
-    shortDescription: "প্রিফিক্স দিলে ইসলামিক মেসেজ ও ছবি পাঠায়",
-    longDescription: "গ্রুপে বটের বর্তমান প্রিফিক্স (যেমন /) পাঠালে একটি ইসলামিক বার্তা ও ছবি রিফ্লাই করবে।",
+    shortDescription: "প্রিফিক্স দিলে ইসলামিক বার্তা ও ছবি পাঠায়",
+    longDescription: "গ্রুপে বটের বর্তমান প্রিফিক্স (যেমন /) পাঠালে একটি ইসলামিক বার্তা ও ছবি রিপ্লাই করবে।",
     category: "user",
     guide: "{prefix}"
   },
 
-  onStart: async function ({ message }) {
-    // কমান্ড নাম লিখে কল করলে কিছু করবে না
-  },
+  onStart: async function () {},
 
-  onChat: async function ({ api, event, message, prefix }) {
-    // বটের মেন ফাইল বা থ্রেডের বর্তমান প্রিফিক্স শনাক্ত করা
-    const currentPrefix = prefix || global.config?.PREFIX;
+  onChat: async function ({ event, message, prefix }) {
+    if (!event.body) return;
 
-    // ব্যবহারকারীর পাঠানো মেসেজটি যদি শুধু প্রিফিক্স (যেমন: /) হয়
-    if (event.body === currentPrefix) {
-      var hi = [
+    // বটের বর্তমান প্রিফিক্স স্বয়ংক্রিয়ভাবে শনাক্ত করা
+    const currentPrefix = prefix || global.GoatBot?.config?.PREFIX || global.config?.PREFIX || "/";
+
+    if (event.body.trim() === currentPrefix) {
+      const hi = [
         "ღ••\n– কোনো নেতার পিছনে নয়.!!🤸‍♂️\n– মসজিদের ইমামের পিছনে দাড়াও জীবন বদলে যাবে ইনশাআল্লাহ.!!🖤🌻\n۵",
         "-!\n__আল্লাহর রহমত থেকে নিরাশ হওয়া যাবে না!” আল্লাহ অবশ্যই তোমাকে ক্ষমা করে দিবেন☺️🌻\nসুরা যুমাহ্ আয়াত ৫২..৫৩💙🌸\n-!",
         "- ইসলাম অহংকার করতে শেখায় না!🌸\n\n- ইসলাম শুকরিয়া আদায় করতে শেখায়!🤲🕋🥀",
@@ -42,14 +43,14 @@ module.exports = {
         "_আল্লাহর ভালোবাসা পেতে চাও•••!🤗\n\n_তবে রাসুল (সা:)কে অনুসরণ করো••!🥰   "
       ];
 
-      var link = [
+      const link = [
         "https://i.postimg.cc/7LdGnyjQ/images-31.jpg",
         "https://i.postimg.cc/65c81ZDZ/images-30.jpg",
         "https://i.postimg.cc/Y0wvTzr6/images-29.jpg",
         "https://i.postimg.cc/1Rpnw2BJ/images-28.jpg",
         "https://i.postimg.cc/mgrPxDs5/images-27.jpg",
         "https://i.postimg.cc/yxXDK3xw/images-26.jpg",
-        "https://i.postimg.cc/kXqVcsh9/muslim-boy-having-worship-praying-fasting-eid-islamic-culture-mosque-73899-1334.webp",
+        "https://i.postimg.cc/kXqVxsin9/muslim-boy-having-worship-praying-fasting-eid-islamic-culture-mosque-73899-1334.webp",
         "https://i.postimg.cc/hGzhj5h8/muslims-reading-from-quran-53876-20958.webp",
         "https://i.postimg.cc/x1Fc92jT/blue-mosque-istanbul-1157-8841.webp",
         "https://i.postimg.cc/j5y56nHL/muhammad-ali-pasha-cairo-219717-5352.webp",
@@ -63,17 +64,41 @@ module.exports = {
         "https://i.postimg.cc/KzNXyttX/images-1-13.jpg"
       ];
 
-      var know = hi[Math.floor(Math.random() * hi.length)];
-      var randomLink = link[Math.floor(Math.random() * link.length)];
+      const know = hi[Math.floor(Math.random() * hi.length)];
+      const randomLink = link[Math.floor(Math.random() * link.length)];
+
+      // অটো ক্যাশ ফোল্ডার তৈরি
+      const cacheDir = path.join(__dirname, "cache");
+      if (!fs.existsSync(cacheDir)) {
+        fs.mkdirSync(cacheDir, { recursive: true });
+      }
+
+      const imagePath = path.join(cacheDir, `prefix_${Date.now()}.jpg`);
 
       try {
-        const imgRes = await axios.get(randomLink, { responseType: "stream" });
-        return message.reply({
-          body: `「 ${know} 」`,
-          attachment: imgRes.data
+        const response = await axios({
+          method: "GET",
+          url: randomLink,
+          responseType: "stream"
+        });
+
+        const writer = fs.createWriteStream(imagePath);
+        response.data.pipe(writer);
+
+        writer.on("finish", () => {
+          message.reply({
+            body: `「 ${know} 」`,
+            attachment: fs.createReadStream(imagePath)
+          }, () => {
+            if (fs.existsSync(imagePath)) fs.unlinkSync(imagePath);
+          });
+        });
+
+        writer.on("error", () => {
+          message.reply(`「 ${know} 」`);
         });
       } catch (error) {
-        return message.reply(`「 ${know} 」`);
+        message.reply(`「 ${know} 」`);
       }
     }
   }
