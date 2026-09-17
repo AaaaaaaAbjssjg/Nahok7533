@@ -22,5 +22,5 @@ jobs:
       - name: Install dependencies
         run: npm install
  
-      - name: Start SIDDIK_BOT
+      - name: Start robiul_BOT
         run: npm start
