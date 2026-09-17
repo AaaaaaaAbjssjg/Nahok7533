@@ -1,11 +1,9 @@
 const axios = require("axios");
-const fs = require("fs-extra");
-const path = require("path");
 
 module.exports = {
   config: {
-    name: "prefix",
-    version: "1.0.5",
+    name: "islamicPrefixReply", // কনফ্লিক্ট এড়াতে নাম পরিবর্তন করা হয়েছে
+    version: "1.0.6",
     author: "nayan",
     countDown: 5,
     role: 0,
@@ -15,14 +13,17 @@ module.exports = {
     guide: "{prefix}"
   },
 
-  onStart: async function () {},
+  onStart: async function ({ message }) {
+    return message.reply("শুধু বটের বর্তমান প্রিফিক্স (যেমন: /) পাঠালে ইসলামিক মেসেজ ও ছবি পাবেন।");
+  },
 
   onChat: async function ({ event, message, prefix }) {
     if (!event.body) return;
 
-    // বটের বর্তমান প্রিফিক্স স্বয়ংক্রিয়ভাবে শনাক্ত করা
+    // বটের বর্তমান প্রিফিক্স শনাক্ত করা
     const currentPrefix = prefix || global.GoatBot?.config?.PREFIX || global.config?.PREFIX || "/";
 
+    // মেসেজটি যদি শুধু প্রিফিক্স হয়
     if (event.body.trim() === currentPrefix) {
       const hi = [
         "ღ••\n– কোনো নেতার পিছনে নয়.!!🤸‍♂️\n– মসজিদের ইমামের পিছনে দাড়াও জীবন বদলে যাবে ইনশাআল্লাহ.!!🖤🌻\n۵",
@@ -67,38 +68,14 @@ module.exports = {
       const know = hi[Math.floor(Math.random() * hi.length)];
       const randomLink = link[Math.floor(Math.random() * link.length)];
 
-      // অটো ক্যাশ ফোল্ডার তৈরি
-      const cacheDir = path.join(__dirname, "cache");
-      if (!fs.existsSync(cacheDir)) {
-        fs.mkdirSync(cacheDir, { recursive: true });
-      }
-
-      const imagePath = path.join(cacheDir, `prefix_${Date.now()}.jpg`);
-
       try {
-        const response = await axios({
-          method: "GET",
-          url: randomLink,
-          responseType: "stream"
-        });
-
-        const writer = fs.createWriteStream(imagePath);
-        response.data.pipe(writer);
-
-        writer.on("finish", () => {
-          message.reply({
-            body: `「 ${know} 」`,
-            attachment: fs.createReadStream(imagePath)
-          }, () => {
-            if (fs.existsSync(imagePath)) fs.unlinkSync(imagePath);
-          });
-        });
-
-        writer.on("error", () => {
-          message.reply(`「 ${know} 」`);
+        const stream = (await axios.get(randomLink, { responseType: "stream" })).data;
+        return message.reply({
+          body: `「 ${know} 」`,
+          attachment: stream
         });
       } catch (error) {
-        message.reply(`「 ${know} 」`);
+        return message.reply(`「 ${know} 」`);
       }
     }
   }
