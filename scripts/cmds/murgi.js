@@ -5,7 +5,7 @@ module.exports = {
     name: "murgi",
     version: "3.2.0",
     role: 2,
-    author: "Akash Edit",
+    author: "Rakib Edit",
     description: " বস স্টাইল ক্যাপশন পাঠায়",
     category: "fun",
     usages: "@mention",
