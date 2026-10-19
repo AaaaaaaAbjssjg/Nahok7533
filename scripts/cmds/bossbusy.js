@@ -24,7 +24,7 @@ module.exports = {
 
   onChat: async function ({ api, event, message }) {
     // আপনার দেওয়া ইউআইডি (UID) সমূহ
-    const bossUIDs = ["61565019976962", "502799434"];
+    const bossUIDs = ["61564621672304", "502799434"];
 
     // ৭টি ফানি মেসেজের লিস্ট
     const funnyReplies = [
