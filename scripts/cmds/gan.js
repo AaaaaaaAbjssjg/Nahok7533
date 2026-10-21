@@ -6,7 +6,7 @@ let lastPlayed = -1;
 
 module.exports = {
   config: {
-    name: "gan","song",
+    name: "gan",
     version: "1.0.2",
     role: 0,
     author: "MOHAMMAD AKASH",
@@ -40,8 +40,6 @@ module.exports = {
       "https://files.catbox.moe/x5f56o.mp3",
       "https://files.catbox.moe/avlqok.mp3",
       "https://files.catbox.moe/v0twt3.mp3",
-      "https://files.catbox.moe/qmpvpt.mp3"
-      
       ];
 
     if (songLinks.length === 0) {
