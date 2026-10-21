@@ -41,7 +41,7 @@ module.exports = {
       "https://files.catbox.moe/avlqok.mp3",
       "https://files.catbox.moe/v0twt3.mp3",
       "https://files.catbox.moe/qmpvpt.mp3"
-      ];
+      ""];
 
     if (songLinks.length === 0) {
       return api.sendMessage("❌ Nᴏ sᴏɴɢs ᴄᴏᴜʟᴅ ʙᴇ ғᴏᴜɴᴅ!", threadID, messageID);
